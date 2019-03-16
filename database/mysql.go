@@ -8,8 +8,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-// DatabaseOptions 创建数据库的选项
-type DatabaseOptions struct {
+// MysqlOptions 创建数据库的选项
+type MysqlOptions struct {
 	Driver    string `yaml:"driver" mapstructure:"driver"`
 	Dsn       string `yaml:"dsn" mapstructure:"dsn"`
 	KeepAlive int    `yaml:"keep_alive" mapstructure:"keep_alive"`
@@ -17,8 +17,8 @@ type DatabaseOptions struct {
 	MaxOpens  int    `yaml:"max_opens" mapstructure:"max_opens"`
 }
 
-// DB Gorm封装
-type DB struct {
+// MysqlDB Gorm封装
+type MysqlDB struct {
 	*gorm.DB
 
 	// ticker 用于keep alive的定时器
@@ -28,14 +28,14 @@ type DB struct {
 // ErrDBRecordNotFound 未查询到数据库记录
 var ErrDBRecordNotFound = gorm.ErrRecordNotFound
 
-// NewDatabase 创建新的数据库对象
-func NewDatabase(opts DatabaseOptions) (*DB, error) {
+// NewMysqlDatabase 创建新的数据库对象
+func NewMysqlDatabase(opts MysqlOptions) (*MysqlDB, error) {
 	o, err := gorm.Open(opts.Driver, opts.Dsn)
 	if err != nil {
 		return nil, errors.Wrap(err, "database open failed")
 	}
 
-	db := &DB{DB: o}
+	db := &MysqlDB{DB: o}
 
 	if opts.MaxIdles > 0 {
 		o.DB().SetMaxIdleConns(opts.MaxIdles)
@@ -50,7 +50,7 @@ func NewDatabase(opts DatabaseOptions) (*DB, error) {
 	return db, nil
 }
 
-func (db *DB) keepAlive(d time.Duration) {
+func (db *MysqlDB) keepAlive(d time.Duration) {
 	db.ticker = time.NewTicker(d)
 	go func() {
 		for range db.ticker.C {
@@ -60,7 +60,7 @@ func (db *DB) keepAlive(d time.Duration) {
 }
 
 // Close 关闭数据库连接
-func (db *DB) Close() error {
+func (db *MysqlDB) Close() error {
 	if db.ticker != nil {
 		db.ticker.Stop()
 	}
