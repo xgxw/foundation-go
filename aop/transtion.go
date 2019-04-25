@@ -13,27 +13,26 @@ const (
 
 var (
 	// 当启用事务时, 返回的析构函数. 会对事务进行提交/回滚等操作.
-	teardownTrans = func(tx *mysql.DB, err *error) {
+	teardownTrans = func(tx *mysql.DB, err error) {
 		if r := recover(); r != nil {
-			*err = errors.InvalidSourceErr
 			tx.Rollback()
 			return
 		}
-		if *err == nil {
+		if err == nil {
 			tx.Commit()
 		} else {
 			tx.Rollback()
 		}
 	}
 
-	teardownDefault = func(tx *mysql.DB, err *error) {}
+	teardownDefault = func(tx *mysql.DB, err error) {}
 
 	TransactionUnformat    = "transaction_unformat"
 	TransactionUnformatErr = &errors.Error{Code: TransactionUnformat, Msg: TransactionUnformat}
 )
 
 // SetTransactional 设置事务传播. 后续开发参照 Java/Spring @Transactional 注解 的理念
-func SetTransactional(ctx context.Context, db *mysql.DB) (newCtx context.Context, teardown func(*mysql.DB, *error), tx *mysql.DB, err error) {
+func SetTransactional(ctx context.Context, db *mysql.DB) (newCtx context.Context, teardown func(*mysql.DB, error), tx *mysql.DB, err error) {
 	val := ctx.Value(Transaction)
 	if val == nil {
 		// 当为入口服务时, 需要执行 commit/Rollback 操作
