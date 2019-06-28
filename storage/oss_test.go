@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -16,9 +17,9 @@ func Test_OssClienta_GetObject(t *testing.T) {
 		return
 	}
 	Convey("Normal", t, func() {
-		client, err := NewOssClient(endpoint, accessKeyID, accessKeySecret)
+		client, err := NewOssClient(endpoint, accessKeyID, accessKeySecret, "xgxw")
 		So(err, ShouldBeNil)
-		buf, err := client.GetObject("xgxw", "todo.md")
+		buf, err := client.GetObject(context.Background(), "todo.md")
 		So(err, ShouldBeNil)
 		fmt.Println(string(buf))
 	})
@@ -32,9 +33,9 @@ func Test_OssClienta_PutObject(t *testing.T) {
 		return
 	}
 	Convey("Normal", t, func() {
-		client, err := NewOssClient(endpoint, accessKeyID, accessKeySecret)
+		client, err := NewOssClient(endpoint, accessKeyID, accessKeySecret, "xgxw")
 		So(err, ShouldBeNil)
-		err = client.PutObject("xgxw", "todo.md", []byte("this is test content"))
+		err = client.PutObject(context.Background(), "todo.md", []byte("this is test content"))
 		So(err, ShouldBeNil)
 	})
 }
