@@ -8,31 +8,32 @@ import (
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 )
 
+type OssOptions struct {
+	Endpoint        string `yaml:"endpoint" mapstructure:"endpoint"`
+	AccessKeyID     string `yaml:"access_key_id" mapstructure:"access_key_id"`
+	AccessKeySecret string `yaml:"access_key_secret" mapstructure:"access_key_secret"`
+	Bucket          string `yaml:"bucket" mapstructure:"bucket"`
+}
+
 type OssClient struct {
 	*oss.Client
-	bucket          *oss.Bucket
-	endpoint        string
-	accessKeyID     string
-	accessKeySecret string
+	bucket *oss.Bucket
 }
 
 var _ StorageClientInterface = &OssClient{}
 
-func NewOssClient(endpoint, accessKeyID, accessKeySecret, bucketID string) (client StorageClientInterface, err error) {
-	ossClient, err := oss.New(endpoint, accessKeyID, accessKeySecret)
+func NewOssClient(opts *OssOptions) (client StorageClientInterface, err error) {
+	ossClient, err := oss.New(opts.Endpoint, opts.AccessKeyID, opts.AccessKeySecret)
 	if err != nil {
 		return client, err
 	}
-	bucket, err := ossClient.Bucket(bucketID)
+	bucket, err := ossClient.Bucket(opts.Bucket)
 	if err != nil {
 		return client, err
 	}
 	return &OssClient{
-		Client:          ossClient,
-		bucket:          bucket,
-		endpoint:        endpoint,
-		accessKeyID:     accessKeyID,
-		accessKeySecret: accessKeySecret,
+		Client: ossClient,
+		bucket: bucket,
 	}, nil
 }
 
