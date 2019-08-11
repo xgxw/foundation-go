@@ -72,9 +72,9 @@ func (o *OssClient) DelObjects(ctx context.Context, fileIDs []string) (err error
 	return err
 }
 
-// GetList is 获取指定文件夹下所有的文件列表, ListOption 参考 storage 中定义,
+// GetCatalog is 获取指定文件夹下所有的文件列表, ListOption 参考 storage 中定义,
 // 采用位运算添加配置. 返回结果为 json 格式
-func (o *OssClient) GetList(ctx context.Context, path string, ops ListOption) (buf []byte, err error) {
+func (o *OssClient) GetCatalog(ctx context.Context, path string, ops ListOption) (buf []byte, err error) {
 	delimter := "/"
 	if ops&ListOptionReverse > 0 {
 		delimter = ""

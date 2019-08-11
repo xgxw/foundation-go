@@ -82,7 +82,7 @@ func Test_OssClient_DelObjects(t *testing.T) {
 	})
 }
 
-func Test_OssClient_GetList(t *testing.T) {
+func Test_OssClient_GetCatalog(t *testing.T) {
 	opts, err := getOssOptions()
 	if err != nil {
 		fmt.Println(err)
@@ -91,7 +91,7 @@ func Test_OssClient_GetList(t *testing.T) {
 	Convey("Normal", t, func() {
 		client, err := NewOssClient(opts)
 		So(err, ShouldBeNil)
-		files, err := client.GetList(context.Background(), "public/", ListOptionReverse)
+		files, err := client.GetCatalog(context.Background(), "public/", ListOptionReverse)
 		fmt.Println(string(files))
 		So(err, ShouldBeNil)
 	})

@@ -23,6 +23,6 @@ type ClientInterface interface {
 	DelObject(ctx context.Context, fileID string) (err error)
 	// DelObjects is 删除多个文件
 	DelObjects(ctx context.Context, fileIDs []string) (err error)
-	// GetList is 获取文件列表, 返回文件目录的json格式. ops 使用位标识配置, 将需要的配置 或运算 即可.
-	GetList(ctx context.Context, path string, ops ListOption) (buf []byte, err error)
+	// GetCatalog is 获取文件列表, 返回文件目录的json格式. ops 使用位标识配置, 将需要的配置 或运算 即可.
+	GetCatalog(ctx context.Context, path string, ops ListOption) (buf []byte, err error)
 }
