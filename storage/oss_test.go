@@ -91,7 +91,7 @@ func Test_OssClient_GetCatalog(t *testing.T) {
 	Convey("Normal", t, func() {
 		client, err := NewOssClient(opts)
 		So(err, ShouldBeNil)
-		files, err := client.GetCatalog(context.Background(), "public/", ListOptionReverse)
+		files, _, err := client.GetCatalog(context.Background(), "public/", ListOptionReverse)
 		fmt.Println(string(files))
 		So(err, ShouldBeNil)
 	})

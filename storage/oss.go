@@ -74,21 +74,22 @@ func (o *OssClient) DelObjects(ctx context.Context, fileIDs []string) (err error
 
 // GetCatalog is 获取指定文件夹下所有的文件列表, ListOption 参考 storage 中定义,
 // 采用位运算添加配置. 返回结果为 json 格式
-func (o *OssClient) GetCatalog(ctx context.Context, path string, ops ListOption) (buf []byte, err error) {
+func (o *OssClient) GetCatalog(ctx context.Context, path string, ops ListOption) (buf []byte, paths []string, err error) {
 	delimter := "/"
 	if ops&ListOptionReverse > 0 {
 		delimter = ""
 	}
 	lsRes, err := o.bucket.ListObjects(oss.Prefix(path), oss.Delimiter(delimter))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	files := make([]string, len(lsRes.Objects))
+	paths = make([]string, len(lsRes.Objects))
 	if !strings.HasSuffix(path, "/") {
 		path = path + "/"
 	}
 	for i, file := range lsRes.Objects {
-		files[i] = strings.Replace(file.Key, path, "", 1)
+		paths[i] = strings.Replace(file.Key, path, "", 1)
 	}
-	return utils.ParseOssLsPaths(files, delimter)
+	buf, err = utils.ParseOssLsPaths(paths, delimter)
+	return buf, paths, err
 }
