@@ -91,7 +91,7 @@ func Test_OssClient_GetList(t *testing.T) {
 	Convey("Normal", t, func() {
 		client, err := NewOssClient(opts)
 		So(err, ShouldBeNil)
-		files, err := client.GetList(context.Background(), "", ListOptionReverse)
+		files, err := client.GetList(context.Background(), "public/", ListOptionReverse)
 		fmt.Println(string(files))
 		So(err, ShouldBeNil)
 	})
