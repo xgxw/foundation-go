@@ -6,6 +6,7 @@ import (
 	"io"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
+	"github.com/everywan/foundation-go/internal/utils"
 )
 
 type OssOptions struct {
@@ -56,4 +57,20 @@ func (o *OssClient) PutObject(ctx context.Context, fileID string, buf []byte) (e
 		return err
 	}
 	return nil
+}
+
+func (o *OssClient) GetList(ctx context.Context, path string, ops ListOption) (buf []byte, err error) {
+	delimter := "/"
+	if ops&ListOption_Reverse > 0 {
+		delimter = ""
+	}
+	lsRes, err := o.bucket.ListObjects(oss.Prefix(path), oss.Delimiter(delimter))
+	if err != nil {
+		return nil, err
+	}
+	files := make([]string, len(lsRes.Objects))
+	for i, file := range lsRes.Objects {
+		files[i] = file.Key
+	}
+	return utils.ParseOssLsPaths(files, delimter)
 }

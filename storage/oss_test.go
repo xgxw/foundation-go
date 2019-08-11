@@ -12,8 +12,8 @@ import (
 
 func getOssOptions() (opts *OssOptions, err error) {
 	var endpoint = "oss-cn-beijing.aliyuncs.com"
-	var accessKeyID = os.Getenv("accrss_key_id")
-	var accessKeySecret = os.Getenv("accrss_key_secret")
+	var accessKeyID = os.Getenv("access_key_id")
+	var accessKeySecret = os.Getenv("access_key_secret")
 	if accessKeyID == "" || accessKeySecret == "" {
 		return opts, errors.New("can't find accessKey")
 	}
@@ -25,9 +25,10 @@ func getOssOptions() (opts *OssOptions, err error) {
 	}, nil
 }
 
-func Test_OssClienta_GetObject(t *testing.T) {
+func Test_OssClient_GetObject(t *testing.T) {
 	opts, err := getOssOptions()
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	Convey("Normal", t, func() {
@@ -39,15 +40,31 @@ func Test_OssClienta_GetObject(t *testing.T) {
 	})
 }
 
-func Test_OssClienta_PutObject(t *testing.T) {
+func Test_OssClient_PutObject(t *testing.T) {
 	opts, err := getOssOptions()
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	Convey("Normal", t, func() {
 		client, err := NewOssClient(opts)
 		So(err, ShouldBeNil)
 		err = client.PutObject(context.Background(), "todo.md", []byte("this is test content"))
+		So(err, ShouldBeNil)
+	})
+}
+
+func Test_OssClient_GetList(t *testing.T) {
+	opts, err := getOssOptions()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	Convey("Normal", t, func() {
+		client, err := NewOssClient(opts)
+		So(err, ShouldBeNil)
+		files, err := client.GetList(context.Background(), "", ListOption_Reverse)
+		fmt.Println(string(files))
 		So(err, ShouldBeNil)
 	})
 }
