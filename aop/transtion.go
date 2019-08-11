@@ -7,6 +7,7 @@ import (
 	"github.com/everywan/foundation-go/errors"
 )
 
+// 常量定义
 const (
 	Transaction = "transaction"
 )
@@ -26,7 +27,10 @@ var (
 	}
 
 	teardownDefault = func(tx *mysql.DB, err error) {}
+)
 
+// 错误类型常量定义
+var (
 	TransactionUnformat    = "transaction_unformat"
 	TransactionUnformatErr = &errors.Error{Code: TransactionUnformat, Msg: TransactionUnformat}
 )

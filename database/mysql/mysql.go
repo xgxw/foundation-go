@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	// gorm 需要
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/pkg/errors"
 )
