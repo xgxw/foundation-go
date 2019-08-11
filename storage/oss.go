@@ -52,11 +52,16 @@ func (o *OssClient) GetObject(ctx context.Context, fileID string) (buf []byte, e
 }
 
 func (o *OssClient) PutObject(ctx context.Context, fileID string, buf []byte) (err error) {
-	err = o.bucket.PutObject(fileID, bytes.NewReader(buf))
-	if err != nil {
-		return err
-	}
-	return nil
+	return o.bucket.PutObject(fileID, bytes.NewReader(buf))
+}
+
+func (o *OssClient) DelObject(ctx context.Context, fileID string) (err error) {
+	return o.bucket.DeleteObject(fileID)
+}
+
+func (o *OssClient) DelObjects(ctx context.Context, fileIDs []string) (err error) {
+	_, err = o.bucket.DeleteObjects(fileIDs)
+	return err
 }
 
 func (o *OssClient) GetList(ctx context.Context, path string, ops ListOption) (buf []byte, err error) {

@@ -49,7 +49,35 @@ func Test_OssClient_PutObject(t *testing.T) {
 	Convey("Normal", t, func() {
 		client, err := NewOssClient(opts)
 		So(err, ShouldBeNil)
-		err = client.PutObject(context.Background(), "todo.md", []byte("this is test content"))
+		err = client.PutObject(context.Background(), "test.md", []byte("this is test content"))
+		So(err, ShouldBeNil)
+	})
+}
+
+func Test_OssClient_DelObject(t *testing.T) {
+	opts, err := getOssOptions()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	Convey("Normal", t, func() {
+		client, err := NewOssClient(opts)
+		So(err, ShouldBeNil)
+		err = client.DelObject(context.Background(), "test/")
+		So(err, ShouldBeNil)
+	})
+}
+
+func Test_OssClient_DelObjects(t *testing.T) {
+	opts, err := getOssOptions()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	Convey("Normal", t, func() {
+		client, err := NewOssClient(opts)
+		So(err, ShouldBeNil)
+		err = client.DelObjects(context.Background(), []string{"test/"})
 		So(err, ShouldBeNil)
 	})
 }
