@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"strings"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	"github.com/everywan/foundation-go/internal/utils"
@@ -84,12 +83,15 @@ func (o *OssClient) GetCatalog(ctx context.Context, path string, ops ListOption)
 		return nil, nil, err
 	}
 	paths = make([]string, len(lsRes.Objects))
-	if !strings.HasSuffix(path, "/") {
-		path = path + "/"
-	}
 	for i, file := range lsRes.Objects {
-		paths[i] = strings.Replace(file.Key, path, "", 1)
+		paths[i] = file.Key
 	}
+	//if !strings.HasSuffix(path, "/") {
+	//	path = path + "/"
+	//}
+	//for i, file := range lsRes.Objects {
+	//	paths[i] = strings.Replace(file.Key, path, "", 1)
+	//}
 	buf, err = utils.ParseOssLsPaths(paths, delimter)
 	return buf, paths, err
 }
