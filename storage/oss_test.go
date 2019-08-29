@@ -96,3 +96,25 @@ func Test_OssClient_GetCatalog(t *testing.T) {
 		So(err, ShouldBeNil)
 	})
 }
+
+func Test_OssClient_SignURL(t *testing.T) {
+	opts, err := getOssOptions()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	Convey("Get", t, func() {
+		client, err := NewOssClient(opts)
+		So(err, ShouldBeNil)
+		url, err := client.SignURL(context.Background(), "todo.md", HTTPGet, 60, 0)
+		fmt.Println(url)
+		So(err, ShouldBeNil)
+	})
+	Convey("Put", t, func() {
+		client, err := NewOssClient(opts)
+		So(err, ShouldBeNil)
+		url, err := client.SignURL(context.Background(), "todo.md", HTTPPost, 60, 0)
+		fmt.Println(url)
+		So(err, ShouldBeNil)
+	})
+}

@@ -95,3 +95,8 @@ func (o *OssClient) GetCatalog(ctx context.Context, path string, ops ListOption)
 	buf, err = utils.ParseOssLsPaths(paths, delimter)
 	return buf, paths, err
 }
+
+// SignURL is 签名url. ops 目前尚不实现
+func (this *OssClient) SignURL(ctx context.Context, path string, method HTTPMethod, expiredInSec int64, ops SignOption) (url string, err error) {
+	return this.bucket.SignURL(path, oss.HTTPMethod(method), expiredInSec)
+}

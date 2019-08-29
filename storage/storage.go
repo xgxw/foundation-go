@@ -6,10 +6,21 @@ import (
 
 // ListOption 可选参数.
 type ListOption int32
+type HTTPMethod string
+type SignOption int32
 
 const (
 	// ListOptionReverse is 表示是否递归显示目录下所有文件
 	ListOptionReverse ListOption = 1 << 0
+)
+
+// HTTPMethod enum
+const (
+	HTTPGet    HTTPMethod = "GET"
+	HTTPPut    HTTPMethod = "PUT"
+	HTTPHead   HTTPMethod = "HEAD"
+	HTTPPost   HTTPMethod = "POST"
+	HTTPDelete HTTPMethod = "DELETE"
 )
 
 // ClientInterface 是为了对外界屏蔽storage内部具体的实现. 使用者通过使用 具体类(如ossClient) 初始化该接口,
@@ -25,4 +36,6 @@ type ClientInterface interface {
 	DelObjects(ctx context.Context, fileIDs []string) (err error)
 	// GetCatalog is 获取文件列表, 返回文件目录的json格式. ops 使用位标识配置, 将需要的配置 或运算 即可.
 	GetCatalog(ctx context.Context, path string, ops ListOption) (buf []byte, paths []string, err error)
+	// SignURL is 签名URL
+	SignURL(ctx context.Context, path string, method HTTPMethod, expiredInSec int64, ops SignOption) (url string, err error)
 }
