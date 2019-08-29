@@ -6,7 +6,7 @@ import (
 	"io"
 
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
-	"github.com/everywan/foundation-go/internal/utils"
+	"github.com/xgxw/foundation-go/internal/utils"
 )
 
 // OssOptions is Oss 存储所需的配置想

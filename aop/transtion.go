@@ -3,8 +3,8 @@ package aop
 import (
 	"context"
 
-	"github.com/everywan/foundation-go/database/mysql"
-	"github.com/everywan/foundation-go/errors"
+	"github.com/xgxw/foundation-go/database/mysql"
+	"github.com/xgxw/foundation-go/errors"
 )
 
 // 常量定义
