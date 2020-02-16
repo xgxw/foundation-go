@@ -7,9 +7,9 @@ import (
 )
 
 type TestStruct struct {
-	ID        int64     `assemble:"id"`
-	Name      string    `assemble:"name"`
-	CreatedAt time.Time `assemble:"created_at"`
+	ID        int64     `gorm:"column:id" assemble:"id"`
+	Name      string    `gorm:"column:name" assemble:"name"`
+	CreatedAt time.Time `gorm:"column:created_at" assemble:"created_at"`
 }
 
 func buildInsertSQL() {

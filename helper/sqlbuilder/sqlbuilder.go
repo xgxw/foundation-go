@@ -27,6 +27,12 @@ func (b *SQLBuilder) InsertSQL(rvalues []reflect.Value, table string) (string, [
 }
 
 // InsertSQLCustom build insert sql. 使用自定义方法获取字段名称
+func (b *SQLBuilder) InsertSQLByGORM(rvalues []reflect.Value, table string) (string, []interface{}, error) {
+
+	return b.insertSQL(rvalues, table, b.getFieldByGorm)
+}
+
+// InsertSQLCustom build insert sql. 使用自定义方法获取字段名称
 func (b *SQLBuilder) InsertSQLCustom(rvalues []reflect.Value, table string,
 	getField func(reflect.StructField) string) (string, []interface{}, error) {
 
@@ -36,6 +42,12 @@ func (b *SQLBuilder) InsertSQLCustom(rvalues []reflect.Value, table string,
 func (b *SQLBuilder) defaultGetField(field reflect.StructField) string {
 	// Lookup 可以判断是否找到tag
 	return field.Tag.Get(DefaultTag)
+}
+
+func (b *SQLBuilder) getFieldByGorm(field reflect.StructField) string {
+	tag := field.Tag.Get("gorm")
+	tags := strings.Split(tag, ":")
+	return tags[1]
 }
 
 func (b *SQLBuilder) insertSQL(rvalues []reflect.Value, table string,
