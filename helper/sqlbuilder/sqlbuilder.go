@@ -8,9 +8,8 @@ import (
 
 /*
 	使用须知
-	1. 只有 public 字段, 且字段tag中有 assemble 标签才会被扫描
-	2. 为了使代码更简洁, 限制传入的 reflect.Value 必须是指针类型的反射值.
-		reflect.ValueOf(Ptr).Elem() == reflect.ValueOf(Struct) (效果上)
+	1. 只有 public 字段, 且字段tag中有指定标签才会被扫描
+	2. 传入的 interface{} 类型为: []*Struct
 */
 
 const DefaultTag = "assemble"
@@ -21,26 +20,24 @@ func NewSQLBuilder() *SQLBuilder {
 	return &SQLBuilder{}
 }
 
-// InsertSQL build insert sql. 使用默认Tag获取字段名称
-func (b *SQLBuilder) InsertSQL(rvalues []reflect.Value, table string) (string, []interface{}, error) {
-	return b.insertSQL(rvalues, table, b.defaultGetField)
+/*
+	InsertSQL build insert sql. 使用默认Tag获取字段名称
+	只有 public 字段, 且字段tag中有指定标签才会被扫描
+*/
+func (b *SQLBuilder) InsertSQL(structPtrSlice interface{}, table string) (string, []interface{}, error) {
+	return b.insertSQL(structPtrSlice, table, b.defaultGetField)
 }
 
-// InsertSQLCustom build insert sql. 使用自定义方法获取字段名称
-func (b *SQLBuilder) InsertSQLByGORM(rvalues []reflect.Value, table string) (string, []interface{}, error) {
-
-	return b.insertSQL(rvalues, table, b.getFieldByGorm)
+func (b *SQLBuilder) InsertSQLByGORM(structPtrSlice interface{}, table string) (string, []interface{}, error) {
+	return b.insertSQL(structPtrSlice, table, b.getFieldByGorm)
 }
 
-// InsertSQLCustom build insert sql. 使用自定义方法获取字段名称
-func (b *SQLBuilder) InsertSQLCustom(rvalues []reflect.Value, table string,
+func (b *SQLBuilder) InsertSQLCustom(structPtrSlice interface{}, table string,
 	getField func(reflect.StructField) string) (string, []interface{}, error) {
-
-	return b.insertSQL(rvalues, table, getField)
+	return b.insertSQL(structPtrSlice, table, getField)
 }
 
 func (b *SQLBuilder) defaultGetField(field reflect.StructField) string {
-	// Lookup 可以判断是否找到tag
 	return field.Tag.Get(DefaultTag)
 }
 
@@ -50,16 +47,22 @@ func (b *SQLBuilder) getFieldByGorm(field reflect.StructField) string {
 	return tags[1]
 }
 
-func (b *SQLBuilder) insertSQL(rvalues []reflect.Value, table string,
+// -------------- 具体实现 --------------
+
+func (b *SQLBuilder) insertSQL(structPtrSlice interface{}, table string,
 	getField func(reflect.StructField) string) (string, []interface{}, error) {
 
-	var typ reflect.Type
-	typ = rvalues[0].Elem().Type()
+	structPtrSliceValue := reflect.ValueOf(structPtrSlice)
+	if structPtrSliceValue.Len() == 0 {
+		return "", []interface{}{}, nil
+	}
 
+	typ := structPtrSliceValue.Index(0).Type().Elem()
 	fields, fieldLocs := b.getFields(typ, getField)
-	holders, values := b.getValues(rvalues, fieldLocs)
+
+	holders, sqlValues := b.getValues(structPtrSliceValue, fieldLocs)
 	sql := b.buildInsertSQL(table, fields, holders)
-	return sql, values, nil
+	return sql, sqlValues, nil
 }
 
 func (b *SQLBuilder) getFields(typ reflect.Type,
@@ -78,8 +81,8 @@ func (b *SQLBuilder) getFields(typ reflect.Type,
 	return fields, fieldLocs
 }
 
-func (b *SQLBuilder) getValues(rvalues []reflect.Value,
-	fieldLocs []int) (holders string, values []interface{}) {
+func (b *SQLBuilder) getValues(structPtrSliceValue reflect.Value,
+	fieldLocs []int) (holders string, sqlValues []interface{}) {
 
 	buf := new(strings.Builder)
 	// 占位符单元
@@ -87,19 +90,22 @@ func (b *SQLBuilder) getValues(rvalues []reflect.Value,
 	holder = fmt.Sprintf("(%s)", strings.TrimSuffix(holder, ","))
 
 	// 获取 占位符 和 values
-	values = make([]interface{}, len(rvalues)*len(fieldLocs))
+	structPtrSliceValueLen := structPtrSliceValue.Len()
+	sqlValues = make([]interface{}, structPtrSliceValueLen*len(fieldLocs))
 	cursor := 0
-	for _, v := range rvalues {
+	for i := 0; i < structPtrSliceValueLen; i++ {
 		buf.WriteString(holder)
 		buf.WriteString(",")
+
+		structValue := structPtrSliceValue.Index(i).Elem()
 		for _, fieldIndex := range fieldLocs {
-			values[cursor] = v.Elem().Field(fieldIndex).Interface()
+			sqlValues[cursor] = structValue.Field(fieldIndex).Interface()
 			cursor++
 		}
 	}
 	holders = buf.String()
 	holders = strings.TrimRight(holders, ",")
-	return holders, values
+	return holders, sqlValues
 }
 
 func (b *SQLBuilder) buildInsertSQL(table, fields, holders string) string {
