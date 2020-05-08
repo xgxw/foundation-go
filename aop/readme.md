@@ -25,7 +25,7 @@ func create(ctx context.Context, sku *SKU) (err error) {
 	if sku == nil || sku.ProductID == 0 {
 		return errors.InvalidSourceErr
 	}
-	db, _ := mysql.NewDatabase(mysql.Options{})
+	db, _ := database.NewDatabase(database.Options{})
 
 	// 加入这一段代码即可, 程序自动负责开启事务, Commit/Rollback
 	// 必须传入 ctx 和 db.
