@@ -2,3 +2,6 @@
 
 . aop 改造, 改成interface方式, 添加 DefaultClient.
   .. interface 目前发现的优点是 mock 方便, 后续容易替换.
+. storage 改造
+  .. Ossclient 命名错误了.
+  .. 每个client 单独封包

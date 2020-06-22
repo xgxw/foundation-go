@@ -12,6 +12,10 @@ const (
 	Transaction = "transaction"
 )
 
+type Transaction interface {
+	Set(context.Context, *database.DB) (context.Context, func(*error), *database.DB, error)
+}
+
 var defaultTransHandler = func(err *error) {}
 
 // 当启用事务时, 返回的析构函数. 会对事务进行提交/回滚等操作.

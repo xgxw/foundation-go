@@ -38,8 +38,8 @@ type OSSStorage struct {
 
 var _ foundation.Storage = &OSSStorage{}
 
-// NewOssClient is 创建oss客户端
-func NewOssClient(opts *OSSOptions) (*OSSStorage, error) {
+// NewOSSStorage is 创建oss客户端
+func NewOSSStorage(opts *OSSOptions) (*OSSStorage, error) {
 	ossClient, err := oss.New(opts.Endpoint, opts.AccessKeyID, opts.AccessKeySecret)
 	if err != nil {
 		return &OSSStorage{}, errors.Wrap(err, "create oss client error")
