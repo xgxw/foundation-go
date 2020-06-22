@@ -1,23 +1,39 @@
 package errors
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 // 错误类型
 var (
-	InvalidSource    = "invalid_source"
-	InvalidSourceErr = &Error{Code: InvalidSource, Msg: InvalidSource}
+	Unkown      = 0
+	UnkownError = New(Unkown, errors.New("unkown error"))
 )
 
 type (
 	// Error is 自定义错误信息
 	Error struct {
-		Code       string `json:"code"`
-		Msg        string `json:"msg,omitempty"`
-		InnerError error  `json:"-"`
+		Code       int   `json:"code"`
+		InnerError error `json:"-"`
 	}
 )
 
 // Error is 转换为字符串
 func (e Error) Error() string {
-	return fmt.Sprintf("code: %s, msg: %s", e.Code, e.Msg)
+	return fmt.Sprintf("code: %d, err: %w", e.Code, e.InnerError)
+}
+
+func New(code int, err error) Error {
+	return Error{
+		Code:       code,
+		InnerError: err,
+	}
+}
+
+func Code(err error) int {
+	if e, ok := err.(Error); ok {
+		return e.Code
+	}
+	return Unkown
 }
