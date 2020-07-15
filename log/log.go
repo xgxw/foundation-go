@@ -27,8 +27,6 @@ type Logger struct {
 	*logrus.Logger
 }
 
-type Fields = logrus.Fields
-
 // Options configuration for logrus
 type Options struct {
 	Formatter string `yaml:"formatter" mapstructure:"formatter"`
@@ -68,6 +66,19 @@ func NewLogger(opts Options, out io.Writer) *Logger {
 	}
 }
 
-func (l *Logger) WithScope(value string) *logrus.Entry {
-	return l.WithField("scope", value)
+// NewEntry creates an Entry object based on current Logger.
+func (l *Logger) NewEntry() *Entry {
+	return NewEntry(l)
+}
+
+func (l *Logger) WithScope(value string) *Entry {
+	return l.NewEntry().WithScope(value)
+}
+
+func (l *Logger) WithField(name string, value interface{}) *Entry {
+	return l.NewEntry().WithField(name, value)
+}
+
+func (l *Logger) WithFields(fields Fields) *Entry {
+	return l.NewEntry().WithFields(fields)
 }
