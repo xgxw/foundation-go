@@ -21,7 +21,7 @@ type (
 
 // Error is 转换为字符串
 func (e Error) Error() string {
-	return fmt.Sprintf("code: %d, err: %w", e.Code, e.InnerError)
+	return fmt.Sprintf("code: %d, err: %s", e.Code, e.InnerError.Error())
 }
 
 func New(code int, err error) Error {
