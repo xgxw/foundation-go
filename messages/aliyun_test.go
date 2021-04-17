@@ -6,11 +6,11 @@ import (
 	"testing"
 
 	"github.com/xgxw/foundation-go"
+	"github.com/xgxw/foundation-go/utils"
 )
 
 func TestAliSendManual(t *testing.T) {
-	skip := false
-	if skip {
+	if utils.SkipTest() {
 		t.SkipNow()
 		return
 	}
