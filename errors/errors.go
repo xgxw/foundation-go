@@ -38,7 +38,7 @@ func (e Error) Code() int {
 }
 
 // New 创建一个内部error
-func New(code int, err error) IError {
+func New(code int, err error) Error {
 	return Error{
 		code:       code,
 		innerError: err,

@@ -2,9 +2,10 @@ package aop
 
 import (
 	"context"
+	"errors"
 
 	"github.com/xgxw/foundation-go/database"
-	"github.com/xgxw/foundation-go/errors"
+	ferrors "github.com/xgxw/foundation-go/errors"
 )
 
 // 常量定义
@@ -33,7 +34,7 @@ func getTransHandler(tx *database.DB) func(*error) {
 // 错误类型常量定义
 var (
 	TransactionUnformat    = "transaction_unformat"
-	TransactionUnformatErr = &errors.Error{Code: TransactionUnformat, Msg: TransactionUnformat}
+	TransactionUnformatErr = ferrors.New(400, errors.New(TransactionUnformat))
 )
 
 // SetTransactional 设置事务传播. 后续开发参照 Java/Spring @Transactional 注解 的理念
