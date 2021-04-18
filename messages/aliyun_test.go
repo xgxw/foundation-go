@@ -15,7 +15,7 @@ func TestAliSendManual(t *testing.T) {
 		return
 	}
 	client, err := NewAliClient(&AliMessageOptions{
-		AccessKeyId:     os.Getenv("access_key_id"),
+		AccessKeyID:     os.Getenv("access_key_id"),
 		AccessKeySecret: os.Getenv("access_key_secret"),
 	})
 	if err != nil {

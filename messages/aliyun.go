@@ -18,15 +18,15 @@ type (
 		*dysmsapi20170525.Client
 	}
 	AliMessageOptions struct {
-		AccessKeyId     string `json:"access_key_id"`
-		AccessKeySecret string `json:"access_key_secret"`
+		AccessKeyID     string `yaml:"access_key_id" mapstructure:"access_key_id"`
+		AccessKeySecret string `yaml:"access_key_secret" mapstructure:"access_key_secret"`
 	}
 )
 
 func NewAliClient(opts *AliMessageOptions) (*AliClient, error) {
 	baseURL := BaseURL
 	config := &openapi.Config{
-		AccessKeyId:     &opts.AccessKeyId,
+		AccessKeyId:     &opts.AccessKeyID,
 		AccessKeySecret: &opts.AccessKeySecret,
 		Endpoint:        &baseURL,
 	}
